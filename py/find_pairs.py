@@ -2,7 +2,36 @@ from abacusnbody.data.compaso_halo_catalog import CompaSOHaloCatalog
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
 import h5py
+import illustris_python.groupcat as gc
 
+
+def load_illustris(basePath, snap_id=91):
+    print()
+    halo_fields = ['GroupFirstSub', 'Group_M_Crit200', 'Group_R_Crit200', 'Group_M_Mean200',
+               'GroupNsubs', 'GroupPos', 'GroupVel', 'GroupFirstSub', 'GroupMassType', 'Group_M_TopHat200']
+    halos = gc.loadHalos(basePath,snap_id, fields=halo_fields) # the selection is based on the FOF groups
+    
+    subhalo_fields = ['SubhaloMass','SubhaloSFRinRad', 'SubhaloPos', 'SubhaloVmax','SubhaloMassType',
+                  'SubhaloVel', 'SubhaloParent', 'SubhaloGrNr', 'SubhaloStellarPhotometrics']
+    subhalos = gc.loadSubhalos(basePath, snap_id, fields=subhalo_fields)
+    header = gc.loadHeader(basePath, snap_id)
+    print(header)
+    halos['ID'] = np.arange(len(halos['Group_M_Crit200']))
+    
+    halo_vmax = subhalos['SubhaloVmax'][np.int_(halos['GroupFirstSub'])]
+    print(len(halo_vmax), len(halos['GroupFirstSub']))
+    
+    #ii = subhalos['vcirc_max_L2com']>220.0
+    ii = halo_vmax > 200.0
+    
+    S_pos = halos['GroupPos'][ii]
+    print(np.shape(S_pos))
+    S_vel = halos['GroupVel'][ii]
+    S_vmax = halo_vmax[ii]
+    S_mass = halos['Group_M_TopHat200']
+    S_parent_fof = halos['ID'][ii]
+    return S_pos, S_vel, S_vmax, S_mass, S_parent_fof
+    
 def load_abacus_summit(sim_path):
     print()
     print(sim_path)
@@ -15,7 +44,7 @@ def load_abacus_summit(sim_path):
     
     # filtering only massive halos
     cat.halos['ID'] = np.arange(len(cat.halos))
-    ii = cat.halos['vcirc_max_L2com']>220.0
+    ii = cat.halos['vcirc_max_L2com']>200.0
     halo_data = cat.halos[ii]
     n_halos = len(halo_data)
     print('Kept {:.1f}M halos in total'.format(n_halos/1E6))
@@ -91,39 +120,45 @@ def find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename):
     #h5f.create_dataset('vmax_G', data=S_vmax)
     return 
 
+
+#Illustris
+for box in [50, 100, 300]:
+    for res in [1,2,3]:
+        basePath = "/pscratch/sd/f/forero/TNG/TNG{}-{}".format(box,res)
+        pair_filename = "../data/pairs_TNG{}-{}.hdf5".format(box,res)
+        S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_illustris(basePath, snap_id=91)
+        print(basePath)
+        find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
+
+# ABACUS
 # 2 Gpc/h, N=6912^3 particles, base resulution. Fixed cosmology, changing phases
-#for phase in range(5):
-#    sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_base_c000_ph{:03d}/halos/z0.100".format(phase)
-#    S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
-#    pair_filename = "../data/pairs_AbacusSummit_base_c000_ph{:03d}_z0.100.hdf5".format(phase)
-#    find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
+for phase in range(5):
+    sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_base_c000_ph{:03d}/halos/z0.100".format(phase)
+    S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
+    pair_filename = "../data/pairs_AbacusSummit_base_c000_ph{:03d}_z0.100.hdf5".format(phase)
+    find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
     
 # 2 Gpc/h, N=6912^3 particles, base resulution. Fixed phase, different cosmologies
 # ver tabla 3 https://arxiv.org/pdf/2110.11398.pdf
 # Illustris es la cosmologia 017
-#for cosmo in range(14,19):
-#    sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_base_c{:03d}_ph000/halos/z0.100".format(cosmo)
-#    S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
-#    pair_filename = "../data/pairs_AbacusSummit_base_c{:03d}_ph000_z0.100.hdf5".format(cosmo)
-#    find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
+for cosmo in range(14,19):
+    sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_base_c{:03d}_ph000/halos/z0.100".format(cosmo)
+    S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
+    pair_filename = "../data/pairs_AbacusSummit_base_c{:03d}_ph000_z0.100.hdf5".format(cosmo)
+    find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
 
 # 1 Gpc/h, base mass resolution. 
-#sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_highbase_c000_ph100/halos/z0.100"
-#S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
-#pair_filename = "../data/pairs_AbacusSummit_highbase_c000_ph100_z0.100.hdf5"
-#find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
-
+sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_highbase_c000_ph100/halos/z0.100"
+S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
+pair_filename = "../data/pairs_AbacusSummit_highbase_c000_ph100_z0.100.hdf5"
+find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
 
 # 1 Gpc/h, N=6300^3 particles, high resolution.
-#sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_high_c000_ph100/halos/z0.100"
-#S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
-#pair_filename = "../data/pairs_AbacusSummit_high_c000_ph100_z0.100.hdf5"
-#find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
+sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_high_c000_ph100/halos/z0.100"
+S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
+pair_filename = "../data/pairs_AbacusSummit_high_c000_ph100_z0.100.hdf5"
+find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
 
-#sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_high_c000_ph100/halos/z0.100"
-#S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
-#pair_filename = "../data/pairs_AbacusSummit_high_c000_ph100_z0.100.hdf5"
-#find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
 
 
     
