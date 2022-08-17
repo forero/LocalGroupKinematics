@@ -63,7 +63,7 @@ def write_velocity_summary(filename_in, filename_out, illustris=False):
 
     # write positions
     np.savetxt(filename_out, results.T, fmt='%f %f %f %f %f %f %f', 
-              header='v_cm v_tan, v_rad m_tot x_cm y_cm z_cm')
+              header='v_cm v_tan, v_rad n_tot x_cm y_cm z_cm')
     print(' wrote results data to {}'.format(filename_out))
 
 
@@ -73,7 +73,26 @@ for box in [50,100,300]:
         filename_out = '../data/lg_pairs_TNG{}-{}.dat'.format(box,res)
         write_velocity_summary(filename_in, filename_out, illustris=True)
         
-for phase in [0,1]:
+for phase in range(5):
     filename_in = '../data/pairs_AbacusSummit_base_c000_ph{:03d}_z0.100.hdf5'.format(phase)
     filename_out = '../data/lg_pairs_AbacusSummit_base_c000_ph{:03d}_z0.100.dat'.format(phase)
     write_velocity_summary(filename_in, filename_out, illustris=False)
+    
+for cosmo in range(14,19):
+    filename_in = '../data/pairs_AbacusSummit_base_c{:03d}_ph000_z0.100.hdf5'.format(cosmo)
+    filename_out = '../data/lg_pairs_AbacusSummit_base_c{:03d}_ph000_z0.100.dat'.format(cosmo)
+    write_velocity_summary(filename_in, filename_out, illustris=False)
+    
+filename_in = "../data/pairs_AbacusSummit_highbase_c000_ph100_z0.100.hdf5"
+filename_out = "../data/lg_pairs_AbacusSummit_highbase_c000_ph100_z0.100.dat"
+write_velocity_summary(filename_in, filename_out, illustris=False)
+
+
+filename_in = "../data/pairs_AbacusSummit_highbase_c000_ph100_z0.100.hdf5"
+filename_out = "../data/lg_pairs_AbacusSummit_highbase_c000_ph100_z0.100.dat"
+write_velocity_summary(filename_in, filename_out, illustris=False)
+
+
+filename_in = "../data/pairs_AbacusSummit_high_c000_ph100_z0.100.hdf5"
+filename_out = "../data/lg_pairs_AbacusSummit_high_c000_ph100_z0.100.dat"
+write_velocity_summary(filename_in, filename_out, illustris=False)
