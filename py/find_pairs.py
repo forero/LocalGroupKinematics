@@ -132,32 +132,32 @@ for box in [50, 100, 300]:
 
 # ABACUS
 # 2 Gpc/h, N=6912^3 particles, base resulution. Fixed cosmology, changing phases
-for phase in range(5):
-    sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_base_c000_ph{:03d}/halos/z0.100".format(phase)
-    S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
-    pair_filename = "../data/pairs_AbacusSummit_base_c000_ph{:03d}_z0.100.hdf5".format(phase)
-    find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
+#for phase in range(5):
+#    sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_base_c000_ph{:03d}/halos/z0.100".format(phase)
+#    S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
+#    pair_filename = "../data/pairs_AbacusSummit_base_c000_ph{:03d}_z0.100.hdf5".format(phase)
+#    find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
     
 # 2 Gpc/h, N=6912^3 particles, base resulution. Fixed phase, different cosmologies
 # ver tabla 3 https://arxiv.org/pdf/2110.11398.pdf
 # Illustris es la cosmologia 017
-for cosmo in range(14,19):
-    sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_base_c{:03d}_ph000/halos/z0.100".format(cosmo)
-    S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
-    pair_filename = "../data/pairs_AbacusSummit_base_c{:03d}_ph000_z0.100.hdf5".format(cosmo)
-    find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
+#for cosmo in range(14,19):
+#    sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_base_c{:03d}_ph000/halos/z0.100".format(cosmo)
+#    S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
+#    pair_filename = "../data/pairs_AbacusSummit_base_c{:03d}_ph000_z0.100.hdf5".format(cosmo)
+#    find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
 
 # 1 Gpc/h, base mass resolution. 
-sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_highbase_c000_ph100/halos/z0.100"
-S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
-pair_filename = "../data/pairs_AbacusSummit_highbase_c000_ph100_z0.100.hdf5"
-find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
+#sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_highbase_c000_ph100/halos/z0.100"
+#S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
+#pair_filename = "../data/pairs_AbacusSummit_highbase_c000_ph100_z0.100.hdf5"
+#find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
 
 # 1 Gpc/h, N=6300^3 particles, high resolution.
-sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_high_c000_ph100/halos/z0.100"
-S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
-pair_filename = "../data/pairs_AbacusSummit_high_c000_ph100_z0.100.hdf5"
-find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
+#sim_path = "/global/cfs/cdirs/desi/cosmosim/Abacus/AbacusSummit_high_c000_ph100/halos/z0.100"
+#S_pos, S_vel, S_vmax, S_mass, S_parent_fof = load_abacus_summit(sim_path)
+#pair_filename = "../data/pairs_AbacusSummit_high_c000_ph100_z0.100.hdf5"
+#find_pairs(S_pos, S_vel, S_vmax, S_mass, S_parent_fof, pair_filename)
 
 
 
